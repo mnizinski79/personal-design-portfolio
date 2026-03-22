@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
+import LayoutShell from '@/components/layout/LayoutShell'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -19,9 +20,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // navLinks, footerLinks, and logoUrl will be fetched from Sanity in Phase 5.
+  // LayoutShell uses built-in placeholder defaults until then.
   return (
     <html lang="en" className={openSans.variable}>
-      <body className="font-sans min-h-screen">{children}</body>
+      <body className="font-sans">
+        <LayoutShell>
+          {children}
+        </LayoutShell>
+      </body>
     </html>
   )
 }
