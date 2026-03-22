@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ── Brand Design Tokens (Tailwind v4 @theme) ─────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-accent-pink:    #EA3B7B;  /* Colors/primary — active nav, accent text */
+  --color-accent-cyan:    #00C4EA;  /* Colors/secondary — skill bars, links */
+  --color-bg-dark:        #2E2E2E;  /* Colors/background-dark — sidebar, projects page */
+  --color-bg-light:       #FEFEFE;  /* Colors/background-light — default page bg */
+  --color-bg-mid:         #F5F5F5;  /* Colors/background-mid — subtle section bg */
+  --color-text-body:      #0A0A0A;  /* Colors/text-primary — primary body copy */
+  --color-text-secondary: #666666;  /* Colors/text-secondary — metadata, captions */
+  --color-text-inverse:   #FFFFFF;  /* Colors/text-inverse — text on dark backgrounds */
+  --color-border-light:   #E0E0E0;  /* Colors/border — form fields, dividers */
+  --color-border-dark:    #474747;  /* Colors/border-dark — resume buttons, dark dividers */
+  --color-status-success: #27AE60;
+  --color-status-warning: #F39C12;
+  --color-status-error:   #E74C3C;
+
+  /* Aliases */
+  --color-sidebar:        #2E2E2E;
+  --color-projects-bg:    #2E2E2E;
+  --color-body-text:      #0A0A0A;
+  --color-meta-label:     #EA3B7B;
+
+  /* Typography */
+  --font-sans: var(--font-open-sans), 'Open Sans', system-ui, sans-serif;
+
+  /* Sizing */
+  --width-sidebar: 190px;
+
+  /* Border radius */
+  --radius-pill:  200px;
+  --radius-small: 4px;
+  --radius-large: 16px;
+
+  /* Transitions */
+  --transition-page: 250ms;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Base styles ───────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+  }
+  body {
+    background-color: var(--color-bg-light);
+    color: var(--color-text-body);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Skill bar fill animation ──────────────────────────────────────────────── */
+/* Triggered by IntersectionObserver adding .animate class */
+.skill-bar-fill {
+  width: 0%;
+  transition: width 0.8s ease-out;
 }
+.skill-bar-fill.animate {
+  width: var(--skill-level);
+}
+
+/* ── Sidebar scrollbar hide ────────────────────────────────────────────────── */
+.sidebar-nav::-webkit-scrollbar { display: none; }
+.sidebar-nav { -ms-overflow-style: none; scrollbar-width: none; }
