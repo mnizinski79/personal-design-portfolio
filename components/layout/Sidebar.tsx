@@ -39,20 +39,13 @@ export default function Sidebar({ pathname, navLinks, logoUrl, collapsed = false
     pathname === href || pathname.startsWith(href + '/')
 
   const LogoMark = ({ size = 'desktop' }: { size?: 'desktop' | 'mobile' }) => (
-    logoUrl ? (
-      <Image
-        src={logoUrl}
-        alt="Mike Nizinski"
-        width={size === 'mobile' ? 114 : 80}
-        height={size === 'mobile' ? 60 : 80}
-        className="object-contain"
-      />
-    ) : (
-      <div className="text-white font-light text-center leading-tight">
-        <div className="text-accent-cyan text-2xl font-semibold tracking-widest">MN</div>
-        <div className="text-[10px] tracking-[3px] uppercase mt-1 text-gray-400">Mike Nizinski</div>
-      </div>
-    )
+    <Image
+      src={logoUrl ?? '/assets/site-logo.svg'}
+      alt="Mike Nizinski"
+      width={size === 'mobile' ? 114 : 114}
+      height={size === 'mobile' ? 60 : 60}
+      className="object-contain"
+    />
   )
 
   return (

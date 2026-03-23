@@ -1,7 +1,54 @@
-export default function ProjectDetailPage({ params }: { params: { slug: string } }) {
+import ProjectMasthead from '@/components/project-detail/ProjectMasthead'
+import BlockRenderer, { Block } from '@/components/project-detail/BlockRenderer'
+
+// Placeholder project data — will be replaced by Sanity GROQ query in Phase 5
+interface Project {
+  title: string
+  textColorInverse: boolean
+  fields: Array<{ label: string; value: string }>
+  contentBlocks: Block[]
+}
+
+const PLACEHOLDER_PROJECT: Project = {
+  title: 'Project Title',
+  textColorInverse: true,
+  fields: [
+    { label: 'Client', value: 'Client Name' },
+    { label: 'Industry', value: 'Financial Services' },
+    { label: 'Year', value: '2024' },
+    { label: 'Role', value: 'UX / UI Design Lead' },
+  ],
+  contentBlocks: [
+    { _type: 'richText', _key: 'b1' },
+    { _type: 'tabbedGallery', _key: 'b2', textColorInverse: true, backgroundColor: '#2E2E2E' },
+    { _type: 'columns', _key: 'b3', variant: 'twoColumn' },
+    { _type: 'note', _key: 'b4' },
+    { _type: 'image', _key: 'b5', variant: 'container' },
+    { _type: 'clientLogos', _key: 'b6' },
+    { _type: 'basicContainer', _key: 'b7' },
+  ],
+}
+
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+
+  // In Phase 5, this will be a Sanity fetch: getProjectBySlug(slug)
+  // For now, all slugs resolve to the same placeholder project
+  void slug
+  const project = PLACEHOLDER_PROJECT
+
   return (
-    <div className="px-16 py-16">
-      <h1 className="text-5xl font-light text-text-body">{params.slug}</h1>
+    <div>
+      <ProjectMasthead
+        title={project.title}
+        fields={project.fields}
+        textColorInverse={project.textColorInverse}
+      />
+      <BlockRenderer blocks={project.contentBlocks} />
     </div>
   )
 }
