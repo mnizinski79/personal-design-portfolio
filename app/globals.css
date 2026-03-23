@@ -12,6 +12,7 @@
   --color-text-secondary: #666666;  /* Colors/text-secondary — metadata, captions */
   --color-text-inverse:   #FFFFFF;  /* Colors/text-inverse — text on dark backgrounds */
   --color-border-light:   #E0E0E0;  /* Colors/border — form fields, dividers */
+  --color-border-mid:     #BFBFBF;  /* Colors/grey/400 — skill bar zone dividers */
   --color-border-dark:    #474747;  /* Colors/border-dark — resume buttons, dark dividers */
   --color-status-success: #27AE60;
   --color-status-warning: #F39C12;
@@ -47,7 +48,34 @@
     background-color: var(--color-bg-light);
     color: var(--color-text-body);
   }
+
+  /* ── Typography scale (Figma spec) ──────────────────────────────────────── */
+  h1 { font-size: 48px; font-weight: 300; line-height: 1.3; }
+  h2 { font-size: 32px; font-weight: 300; line-height: 1.3; }
+  h3 { font-size: 24px; font-weight: 400; line-height: 1.3; }
+  h4 { font-size: 20px; font-weight: 400; line-height: 1.3; }
+  h5 { font-size: 12px; font-weight: 600; line-height: 1.3; letter-spacing: 1.5px; text-transform: uppercase; }
+  h6 { font-size: 16px; font-weight: 400; line-height: 1.3; }
+
+  /* Body: 16px Regular — line-height uses leading-relaxed (1.625) per visual preference;
+     Figma spec says 1.3 but was rejected. Update when Figma is corrected. */
+  p { font-size: 16px; font-weight: 400; line-height: 1.625; }
 }
+
+/* ── Typography variant classes ────────────────────────────────────────────── */
+/* Use these for Figma's multi-variant heading styles and body-small.          */
+/* Apply alongside color/margin utilities as needed.                           */
+
+/* H4 uppercase variant */
+.h4-upper { font-size: 20px; font-weight: 400; line-height: 1.3; text-transform: uppercase; }
+
+/* H6 variants */
+.h6-upper        { font-size: 16px; font-weight: 400; line-height: 1.3; text-transform: uppercase; }
+.h6-semibold     { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.h6-semibold-upper { font-size: 16px; font-weight: 600; line-height: 1.3; text-transform: uppercase; }
+
+/* Body Small: 12px Regular — TODO: update Figma LH spec before aligning line-height */
+.body-small { font-size: 12px; font-weight: 400; line-height: 1.625; }
 
 /* ── Skill bar fill animation ──────────────────────────────────────────────── */
 /* Triggered by IntersectionObserver adding .animate class */
@@ -62,3 +90,47 @@
 /* ── Sidebar scrollbar hide ────────────────────────────────────────────────── */
 .sidebar-nav::-webkit-scrollbar { display: none; }
 .sidebar-nav { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Featured project section — fluid horizontal padding ──────────────────── */
+/* Outer section: scales from 83px (768px viewport) → 156px (1440px viewport)  */
+/* Inner text inset: 0px below 900px → 288px at 1440px, fluid in between        */
+.featured-section {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+@media (min-width: 768px) {
+  .featured-section {
+    padding-left: min(156px, 10.833vw);
+    padding-right: min(156px, 10.833vw);
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .featured-text-inset {
+    padding-left: max(0px, min(288px, calc((100vw - 900px) * 0.5333)));
+    padding-right: max(0px, min(288px, calc((100vw - 900px) * 0.5333)));
+  }
+}
+
+/* ─── Page content column ──────────────────────────────────────────────────── */
+/* Centers a 744px content column on the full viewport (Figma grid: px-[348px]  */
+/* on 1440px canvas). On smaller desktops, falls back to min 230px left offset  */
+/* so the fixed sidebar never overlaps. Mobile: full-width with side padding.   */
+.page-content {
+  width: 100%;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 768px) {
+  .page-content {
+    padding-left: 0;
+    padding-right: 0;
+    /* Center on full viewport, but never closer than 230px to left edge (sidebar clearance) */
+    margin-left: max(230px, calc((100vw - 744px) / 2));
+    margin-right: auto;
+    /* Shrink gracefully when viewport is narrow (768px–1164px) */
+    width: min(744px, calc(100vw - 238px));
+  }
+}

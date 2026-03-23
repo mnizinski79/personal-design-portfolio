@@ -1,3 +1,5 @@
+import { Fragment } from 'react'
+
 interface FooterLink {
   platform: string
   handle: string
@@ -19,23 +21,45 @@ export default function Footer({ links }: FooterProps) {
   const footerLinks = links && links.length > 0 ? links : PLACEHOLDER_LINKS
 
   return (
-    <footer className="py-6 px-8">
-      <ul className="flex flex-row items-center gap-0 flex-wrap">
-        {footerLinks.map((link, i) => (
-          <li key={link.url} className="flex items-center">
-            {i > 0 && (
-              <span className="mx-3 text-gray-500 text-xs select-none">|</span>
-            )}
+    <footer className="py-4 px-6">
+      {/* Mobile: vertical stack */}
+      <ul className="md:hidden flex flex-col items-center gap-4">
+        {footerLinks.map((link) => (
+          <li key={link.url}>
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs tracking-wide text-gray-400 hover:text-accent-cyan transition-colors duration-200"
+              className="flex gap-1 items-center hover:opacity-80 transition-opacity duration-200 text-base whitespace-nowrap"
             >
-              {link.platform}
-              <span className="text-gray-600 ml-1">{link.handle}</span>
+              <span className="text-accent-pink font-semibold">{link.platform}:</span>
+              <span className="text-text-secondary font-light">{link.handle}</span>
             </a>
           </li>
+        ))}
+      </ul>
+
+      {/* Desktop: horizontal row, centered, up to 936px but shrinks with viewport */}
+      <ul className="hidden md:flex flex-row items-center justify-between w-full max-w-[936px] mx-auto">
+        {footerLinks.map((link, i) => (
+          <Fragment key={link.url}>
+            {i > 0 && (
+              <li className="self-stretch flex items-center" aria-hidden="true">
+                <span className="w-px h-full bg-gray-500" />
+              </li>
+            )}
+            <li className="flex-1 flex items-center justify-center gap-1">
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex gap-1 items-center hover:opacity-80 transition-opacity duration-200 text-base text-center whitespace-nowrap"
+              >
+                <span className="text-accent-pink font-semibold">{link.platform}:</span>
+                <span className="text-text-secondary font-light">{link.handle}</span>
+              </a>
+            </li>
+          </Fragment>
         ))}
       </ul>
     </footer>

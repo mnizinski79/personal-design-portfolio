@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import NavLink from './NavLink'
+import TransitionLink from './TransitionLink'
 
 interface NavLinkItem {
   label: string
@@ -14,6 +14,8 @@ interface SidebarProps {
   pathname: string
   navLinks?: NavLinkItem[]
   logoUrl?: string
+  collapsed?: boolean
+  onMouseEnter?: () => void
 }
 
 const DEFAULT_NAV_LINKS: NavLinkItem[] = [
@@ -22,14 +24,10 @@ const DEFAULT_NAV_LINKS: NavLinkItem[] = [
   { label: 'Contact', href: '/contact' },
 ]
 
-export default function Sidebar({ pathname, navLinks, logoUrl }: SidebarProps) {
+export default function Sidebar({ pathname, navLinks, logoUrl, collapsed = false, onMouseEnter }: SidebarProps) {
   const links = navLinks && navLinks.length > 0 ? navLinks : DEFAULT_NAV_LINKS
 
-  // Desktop: scroll-collapse state
-  const [collapsed, setCollapsed] = useState(false)
-  const [lastScrollY, setLastScrollY] = useState(0)
-
-  // Mobile: overlay open/close state
+  // Mobile: expand/collapse state
   const [menuOpen, setMenuOpen] = useState(false)
 
   // Close mobile menu on route change
@@ -37,154 +35,116 @@ export default function Sidebar({ pathname, navLinks, logoUrl }: SidebarProps) {
     setMenuOpen(false)
   }, [pathname])
 
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
-
-  // Desktop scroll-collapse
-  const handleScroll = useCallback(() => {
-    const y = window.scrollY
-    if (y > lastScrollY && y > 80) {
-      setCollapsed(true)
-    } else if (y < lastScrollY) {
-      setCollapsed(false)
-    }
-    setLastScrollY(y)
-  }, [lastScrollY])
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [handleScroll])
-
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + '/')
+
+  const LogoMark = ({ size = 'desktop' }: { size?: 'desktop' | 'mobile' }) => (
+    logoUrl ? (
+      <Image
+        src={logoUrl}
+        alt="Mike Nizinski"
+        width={size === 'mobile' ? 114 : 80}
+        height={size === 'mobile' ? 60 : 80}
+        className="object-contain"
+      />
+    ) : (
+      <div className="text-white font-light text-center leading-tight">
+        <div className="text-accent-cyan text-2xl font-semibold tracking-widest">MN</div>
+        <div className="text-[10px] tracking-[3px] uppercase mt-1 text-gray-400">Mike Nizinski</div>
+      </div>
+    )
+  )
 
   return (
     <>
       {/* ── Desktop sidebar ───────────────────────────────────────────────── */}
       <aside
-        onMouseEnter={() => setCollapsed(false)}
-        className="sidebar-nav hidden md:flex flex-col items-center py-8 fixed top-0 left-0 h-full z-50 bg-sidebar w-[190px]"
-        style={{
-          transform: collapsed ? 'translateX(-155px)' : 'translateX(0)',
-          transition: 'transform 200ms ease-in-out',
-        }}
+        onMouseEnter={onMouseEnter}
+        className="sidebar-nav hidden md:flex flex-col items-center p-8 fixed top-5 left-5 h-auto z-50 bg-sidebar w-[190px] rounded-small"
         aria-label="Site navigation"
       >
-        {/* Logo */}
-        <Link href="/" className="mb-8 flex-shrink-0" aria-label="Home">
-          {logoUrl ? (
-            <Image
-              src={logoUrl}
-              alt="Mike Nizinski"
-              width={80}
-              height={80}
-              className="object-contain"
-            />
-          ) : (
-            // Placeholder logo text until Sanity is wired
-            <div className="text-white font-light text-center leading-tight">
-              <div className="text-accent-cyan text-2xl font-semibold tracking-widest">MN</div>
-              <div className="text-[10px] tracking-[3px] uppercase mt-1 text-gray-400">Mike Nizinski</div>
-            </div>
-          )}
-        </Link>
+        <TransitionLink href="/" className="flex-shrink-0" aria-label="Home">
+          <LogoMark />
+        </TransitionLink>
 
-        {/* Nav links */}
-        <nav className="flex flex-col items-center w-full mt-2">
-          {links.map((link, i) => (
-            <div key={link.href} className="w-full flex flex-col items-center">
-              {i > 0 && (
-                <hr className="w-1/2 border-gray-600 my-0" />
-              )}
-              <NavLink
-                href={link.href}
-                label={link.label}
-                isActive={isActive(link.href)}
-              />
-            </div>
-          ))}
-        </nav>
+        {/* Nav items — collapse by shrinking height and fading, matching Figma collapsed state */}
+        <div
+          style={{
+            maxHeight: collapsed ? '0' : '300px',
+            opacity: collapsed ? 0 : 1,
+            marginTop: collapsed ? '0' : '56px',
+            overflow: 'hidden',
+            width: '100%',
+            transition: 'max-height 200ms ease-in-out, opacity 150ms ease-in-out, margin-top 200ms ease-in-out',
+          }}
+          aria-hidden={collapsed}
+        >
+          <nav className="flex flex-col items-center w-full gap-5">
+            {links.map((link, i) => (
+              <div key={link.href} className="w-full flex flex-col items-center gap-5">
+                {i > 0 && <hr className="w-8 border-gray-600" />}
+                <NavLink href={link.href} label={link.label} isActive={isActive(link.href)} />
+              </div>
+            ))}
+          </nav>
+        </div>
       </aside>
 
-      {/* ── Mobile top bar ────────────────────────────────────────────────── */}
-      <header
-        className="md:hidden fixed top-0 inset-x-0 h-14 bg-sidebar z-50 flex items-center px-4"
-        aria-label="Mobile site header"
-      >
-        <Link href="/" className="absolute left-1/2 -translate-x-1/2" aria-label="Home">
-          {logoUrl ? (
-            <Image src={logoUrl} alt="Mike Nizinski" width={32} height={32} className="object-contain" />
-          ) : (
-            <span className="text-accent-cyan font-semibold tracking-widest text-sm">MN</span>
-          )}
-        </Link>
-        <button
-          onClick={() => setMenuOpen(true)}
-          className="ml-auto text-white text-2xl leading-none p-2 -mr-2"
-          aria-label="Open navigation menu"
-          aria-expanded={menuOpen}
+      {/* ── Mobile expandable top bar ──────────────────────────────────────── */}
+      <header className="md:hidden sticky top-0 z-50 bg-sidebar" aria-label="Mobile site header">
+        {/* Logo row — logo centered, trigger absolutely positioned right */}
+        <div className="relative flex items-center justify-center p-4">
+          <TransitionLink href="/" aria-label="Home">
+            <LogoMark size="mobile" />
+          </TransitionLink>
+
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center"
+            aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? (
+              // × close icon — two crossed bars
+              <span className="relative w-6 h-6 flex items-center justify-center">
+                <span className="absolute w-6 h-[4px] bg-white rounded-full rotate-45" />
+                <span className="absolute w-6 h-[4px] bg-white rounded-full -rotate-45" />
+              </span>
+            ) : (
+              // Hamburger — staggered opacity per Figma
+              <span className="flex flex-col gap-[7px]">
+                <span className="block w-6 h-[4px] bg-white opacity-60 rounded-full" />
+                <span className="block w-6 h-[4px] bg-white opacity-80 rounded-full" />
+                <span className="block w-6 h-[4px] bg-white rounded-full" />
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* Expandable nav items — expands downward, pushes content */}
+        <div
+          style={{
+            maxHeight: menuOpen ? '240px' : '0',
+            overflow: 'hidden',
+            transition: 'max-height 250ms ease-in-out',
+          }}
+          aria-hidden={!menuOpen}
         >
-          ☰
-        </button>
+          <nav className="flex flex-col items-center pb-6 gap-5">
+            {links.map((link, i) => (
+              <div key={link.href} className="flex flex-col items-center gap-5 w-full">
+                {i > 0 && <hr className="w-8 border-gray-600" />}
+                <NavLink
+                  href={link.href}
+                  label={link.label}
+                  isActive={isActive(link.href)}
+                  onClick={() => setMenuOpen(false)}
+                />
+              </div>
+            ))}
+          </nav>
+        </div>
       </header>
-
-      {/* ── Mobile nav overlay ────────────────────────────────────────────── */}
-      <div
-        className="md:hidden fixed inset-0 bg-sidebar z-50 flex flex-col items-center justify-center"
-        style={{
-          transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 200ms ease-in-out',
-        }}
-        aria-hidden={!menuOpen}
-        role="dialog"
-        aria-label="Navigation menu"
-      >
-        {/* Close button */}
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="absolute top-4 right-4 text-white text-3xl leading-none p-2 -mr-2"
-          aria-label="Close navigation menu"
-        >
-          ×
-        </button>
-
-        {/* Logo */}
-        <Link href="/" className="mb-10" aria-label="Home" onClick={() => setMenuOpen(false)}>
-          {logoUrl ? (
-            <Image src={logoUrl} alt="Mike Nizinski" width={60} height={60} className="object-contain" />
-          ) : (
-            <div className="text-center">
-              <div className="text-accent-cyan text-3xl font-semibold tracking-widest">MN</div>
-              <div className="text-[10px] tracking-[3px] uppercase mt-1 text-gray-400">Mike Nizinski</div>
-            </div>
-          )}
-        </Link>
-
-        {/* Nav links */}
-        <nav className="flex flex-col items-center w-full">
-          {links.map((link, i) => (
-            <div key={link.href} className="w-full flex flex-col items-center">
-              {i > 0 && (
-                <hr className="w-1/3 border-gray-600 my-2" />
-              )}
-              <NavLink
-                href={link.href}
-                label={link.label}
-                isActive={isActive(link.href)}
-                onClick={() => setMenuOpen(false)}
-              />
-            </div>
-          ))}
-        </nav>
-      </div>
     </>
   )
 }
