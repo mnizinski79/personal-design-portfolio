@@ -9,13 +9,16 @@ interface ProjectMastheadProps {
   title: string
   fields?: MastheadField[]
   textColorInverse?: boolean
-  // backgroundImage + logoImage will be next/image once CMS is wired in Phase 5
+  backgroundImageUrl?: string
+  logoImageUrl?: string
 }
 
 export default function ProjectMasthead({
   title,
   fields = [],
   textColorInverse = false,
+  backgroundImageUrl,
+  logoImageUrl,
 }: ProjectMastheadProps) {
   const titleColor = 'text-text-body'
   const valueColor = 'text-text-secondary'
@@ -28,7 +31,7 @@ export default function ProjectMasthead({
     >
       {/* Background image */}
       <Image
-        src="/assets/masthead-background-image.png"
+        src={backgroundImageUrl ?? '/assets/masthead-background-image.png'}
         alt=""
         fill
         className="object-cover"
@@ -40,7 +43,7 @@ export default function ProjectMasthead({
         {/* Client logo */}
         <div className="relative h-[60px] w-[200px]">
           <Image
-            src="/assets/client-logo-color.png"
+            src={logoImageUrl ?? '/assets/client-logo-color.png'}
             alt="Client logo"
             fill
             className="object-contain object-left"
@@ -69,7 +72,7 @@ export default function ProjectMasthead({
           {/* Client logo */}
           <div className="relative h-[90px] w-[320px]">
             <Image
-              src="/assets/client-logo-color.png"
+              src={logoImageUrl ?? '/assets/client-logo-color.png'}
               alt="Client logo"
               fill
               className="object-contain object-left"

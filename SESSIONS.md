@@ -2,6 +2,29 @@
 
 ---
 
+## 2026-03-24 — Phase 5: Sanity CMS Integration
+
+### Accomplished
+- **Studio route** — `app/studio/[[...tool]]/page.tsx` with `NextStudio` (accessible at `/studio`)
+- **Home page** — fetches `featuredProjectsQuery` from Sanity; falls back to placeholder if no data; renders real `featuredImage` via `urlFor()`
+- **Projects page** — fetches `projectsQuery`; maps `thumbnail` → `urlFor().width(980).height(490).url()`; passes `thumbnailUrl` to `ProjectCard`
+- **Project detail page** — fetches `projectBySlugQuery` by slug; `generateStaticParams` for SSG; maps `headerBackgroundImage` + `mastheadFields`; falls back to full placeholder preview for `slug === 'placeholder'`
+- **ProjectCard / ProjectGrid** — added `thumbnailUrl?` prop; falls back to placeholder asset
+- **ProjectMasthead** — added `backgroundImageUrl?` and `logoImageUrl?` props; falls back to placeholder assets
+- **ImageBlock** — added `imageUrl?` prop for real Sanity image passthrough
+- **ClientLogosBlock** — `LogoItem` extended with `logoUrl?`; uses real logo if provided
+- **BlockRenderer** — added `toImageUrl()` helper; handles `imageBlock` Sanity type (alongside `image`); transforms `leftImage`/`rightImage` refs for TabbedGallery tabs; transforms `logo` refs for ClientLogos; maps `basicContainer.content` field
+- **next.config.ts** — `cdn.sanity.io` already whitelisted (was set up in Phase 1)
+
+### Next Steps
+1. **Enter real content in Sanity Studio** — add projects, images, copy at `/studio`
+2. **Contact form** — wire submission handler (SendGrid env vars already in `.env.local`)
+3. **SEO / metadata** — `generateMetadata` per page, OG images
+4. **Performance pass** — image optimization audit, Lighthouse run
+5. **Deploy** — Vercel deploy with env vars
+
+---
+
 ## 2026-03-24 — Phase 4 Polish: Block Layout Refinements & Mobile QA
 
 ### Accomplished

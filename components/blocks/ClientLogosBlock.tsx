@@ -2,6 +2,7 @@ import Image from 'next/image'
 
 interface LogoItem {
   name: string
+  logoUrl?: string
 }
 
 interface ClientLogosBlockProps {
@@ -49,7 +50,7 @@ export default function ClientLogosBlock({
               >
                 <div className="relative w-full h-[60px]">
                   <Image
-                    src={textColorInverse ? '/assets/client-logo-knockout.png' : '/assets/client-logo-color.png'}
+                    src={logo.logoUrl ?? (textColorInverse ? '/assets/client-logo-knockout.png' : '/assets/client-logo-color.png')}
                     alt={logo.name}
                     fill
                     className="object-contain"

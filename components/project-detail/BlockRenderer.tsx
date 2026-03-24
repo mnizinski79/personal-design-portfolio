@@ -6,6 +6,7 @@ import ClientLogosBlock from '@/components/blocks/ClientLogosBlock'
 import SkillBarsBlock from '@/components/blocks/SkillBarsBlock'
 import Note from '@/components/blocks/Note'
 import BasicContainer from '@/components/blocks/BasicContainer'
+import { urlFor } from '@/sanity/lib/image'
 
 export interface Block {
   _type: string
@@ -27,6 +28,13 @@ function BlockLabel({ name }: { name: string }) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toImageUrl(ref: any): string | undefined {
+  if (!ref) return undefined
+  if (typeof ref === 'string') return ref
+  try { return urlFor(ref).url() } catch { return undefined }
+}
+
 export default function BlockRenderer({ blocks }: BlockRendererProps) {
   return (
     <>
@@ -40,8 +48,17 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
           case 'richText':
             return <div key={block._key}><BlockLabel name="Rich Text" /><RichTextBlock {...sharedProps} body={block.body as never} /></div>
 
-          case 'tabbedGallery':
-            return <div key={block._key}><BlockLabel name="Tabbed Gallery" /><TabbedGallery {...sharedProps} tabs={block.tabs as never} /></div>
+          case 'tabbedGallery': {
+            // Transform Sanity image refs to URL strings for each tab
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const rawTabs = block.tabs as any[] | undefined
+            const tabs = rawTabs?.map((tab) => ({
+              label: tab.label as string,
+              imageLeft: toImageUrl(tab.leftImage) ?? tab.imageLeft,
+              imageRight: toImageUrl(tab.rightImage) ?? tab.imageRight,
+            }))
+            return <div key={block._key}><BlockLabel name="Tabbed Gallery" /><TabbedGallery {...sharedProps} tabs={tabs} /></div>
+          }
 
           case 'columns':
             return (
@@ -56,29 +73,45 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
               </div>
             )
 
+          // Handle both placeholder type ('image') and Sanity schema type ('imageBlock')
           case 'image':
+          case 'imageBlock': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const imgRef = block.image as any
+            const imageUrl = toImageUrl(imgRef?.asset ? imgRef : undefined)
+              ?? (imgRef as string | undefined)
+            const alt = (imgRef?.alt as string | undefined) ?? (block.alt as string | undefined)
             return (
               <div key={block._key}>
                 <BlockLabel name="Image" />
                 <ImageBlock
                   backgroundColor={block.backgroundColor}
                   variant={block.variant as never}
-                  alt={block.alt as string}
+                  alt={alt}
+                  imageUrl={imageUrl}
                 />
               </div>
             )
+          }
 
-          case 'clientLogos':
+          case 'clientLogos': {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const rawLogos = block.logos as any[] | undefined
+            const logos = rawLogos?.map((l) => ({
+              name: (l.companyName ?? l.name) as string,
+              logoUrl: toImageUrl(l.logo),
+            }))
             return (
               <div key={block._key}>
                 <BlockLabel name="Client Logos" />
                 <ClientLogosBlock
                   {...sharedProps}
-                  logos={block.logos as never}
+                  logos={logos}
                   columns={block.columns as number}
                 />
               </div>
             )
+          }
 
           case 'skillBars':
             return <div key={block._key}><BlockLabel name="Skill Bars" /><SkillBarsBlock {...sharedProps} /></div>
@@ -96,7 +129,7 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
             )
 
           case 'basicContainer':
-            return <div key={block._key}><BlockLabel name="Basic Container" /><BasicContainer {...sharedProps} body={block.body as never} /></div>
+            return <div key={block._key}><BlockLabel name="Basic Container" /><BasicContainer {...sharedProps} body={(block.content ?? block.body) as never} /></div>
 
           default:
             return null

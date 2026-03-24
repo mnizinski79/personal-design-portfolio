@@ -1,20 +1,22 @@
-import ProjectGrid from '@/components/projects/ProjectGrid'
+import { client } from '@/sanity/lib/client'
+import { projectsQuery } from '@/sanity/lib/queries'
+import { urlFor } from '@/sanity/lib/image'
+import ProjectGrid, { ProjectGridItem } from '@/components/projects/ProjectGrid'
 
-// Placeholder data — will be replaced by Sanity GROQ query in Phase 5
-const PROJECTS = [
-  { slug: 'marriott', gridLabel: 'Marriott International' },
-  { slug: 'discovery', gridLabel: 'Discovery Networks' },
-  { slug: 'capital-one', gridLabel: 'Capital One' },
-  { slug: 'inova', gridLabel: 'Inova Health System' },
-  { slug: 'pbs', gridLabel: 'PBS' },
-  { slug: 'sallie-mae', gridLabel: 'Sallie Mae' },
-]
+export default async function ProjectsPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw: any[] = await client.fetch(projectsQuery).catch(() => [])
 
-export default function ProjectsPage() {
+  const projects: ProjectGridItem[] = raw.map((p) => ({
+    slug: p.slug?.current ?? p.slug,
+    gridLabel: p.gridLabel ?? p.title ?? '',
+    thumbnailUrl: p.thumbnail ? urlFor(p.thumbnail).width(980).height(490).url() : undefined,
+  }))
+
   return (
     // Page bg is white — dark bg is scoped to the grid container only (Figma: 2106:1559)
     <div className="md:pl-[230px] overflow-clip">
-      <ProjectGrid projects={PROJECTS} />
+      <ProjectGrid projects={projects} />
     </div>
   )
 }

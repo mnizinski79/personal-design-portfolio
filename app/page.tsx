@@ -1,19 +1,30 @@
+import { client } from '@/sanity/lib/client'
+import { featuredProjectsQuery } from '@/sanity/lib/queries'
+import { urlFor } from '@/sanity/lib/image'
 import TransitionLink from '@/components/layout/TransitionLink'
 import Button from '@/components/ui/Button'
+import Image from 'next/image'
 
-const FEATURED_PROJECTS = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FeaturedProject = Record<string, any>
+
+// Fallback used when no Sanity data exists yet
+const PLACEHOLDER_PROJECTS: FeaturedProject[] = [
   {
-    slug: 'placeholder',
+    slug: { current: 'placeholder' },
+    featuredTitle: 'Project Title',
     clientLabel: 'Client Name',
-    title: 'Project Title',
-    description: 'Lorem ipsum dolor sit amet consectetur. Diam enim aliquam dignissim consectetur suspendisse. Tortor sagittis nisi lectus consequat eu. Nulla scelerisque elit dignissim mattis.',
-    buttonLabel: 'View Details',
-    background: '#2E2E2E',
-    textColorInverse: true,
+    featuredDescription: 'Lorem ipsum dolor sit amet consectetur. Diam enim aliquam dignissim consectetur suspendisse. Tortor sagittis nisi lectus consequat eu. Nulla scelerisque elit dignissim mattis.',
+    featuredButtonLabel: 'View Details',
+    featuredBackground: '#2E2E2E',
+    featuredTextColorInverse: true,
   },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  const sanityProjects: FeaturedProject[] = await client.fetch(featuredProjectsQuery).catch(() => [])
+  const featuredProjects = sanityProjects.length > 0 ? sanityProjects : PLACEHOLDER_PROJECTS
+
   return (
     <div>
       {/* ── Hero / Bio section ─────────────────────────────────────────────── */}
@@ -45,47 +56,57 @@ export default function HomePage() {
       </section>
 
       {/* ── Featured Projects ──────────────────────────────────────────────── */}
-      {FEATURED_PROJECTS.length > 0 && (
+      {featuredProjects.length > 0 && (
         <section>
-          {FEATURED_PROJECTS.map((project) => (
-            <div
-              key={project.slug}
-              style={{ backgroundColor: project.background }}
-            >
-              <div className="featured-section content-grid flex flex-col gap-10">
-                {/* Image placeholder: w-full within the padded container */}
-                <div className="w-full aspect-[1128/529] bg-bg-mid rounded-small" />
+          {featuredProjects.map((project) => {
+            const slug = project.slug?.current ?? project.slug ?? 'placeholder'
+            const title = project.featuredTitle ?? project.title ?? 'Project Title'
+            const clientLabel = project.clientLabel ?? project.gridLabel ?? 'Client Name'
+            const description = project.featuredDescription ?? ''
+            const buttonLabel = project.featuredButtonLabel ?? 'View Details'
+            const background = project.featuredBackground ?? '#2E2E2E'
+            const textColorInverse = project.featuredTextColorInverse ?? true
+            const featuredImageUrl = project.featuredImage
+              ? urlFor(project.featuredImage).width(1128).url()
+              : null
 
-                {/* Text: fluid inset that scales with viewport */}
-                <div className="featured-text-inset flex flex-col gap-8 items-start">
-                  <div className="flex flex-col gap-4">
-                    <p className="text-accent-pink text-base tracking-[1.5px] uppercase">
-                      {project.clientLabel}
-                    </p>
-                    <h2
-                      className={project.textColorInverse ? 'text-text-inverse' : 'text-text-body'}
+            return (
+              <div key={slug} style={{ backgroundColor: background }}>
+                <div className="featured-section content-grid flex flex-col gap-10">
+                  {/* Project image */}
+                  {featuredImageUrl ? (
+                    <div className="w-full aspect-[1128/529] relative rounded-small overflow-hidden">
+                      <Image src={featuredImageUrl} alt={title} fill className="object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-full aspect-[1128/529] bg-bg-mid rounded-small" />
+                  )}
+
+                  {/* Text */}
+                  <div className="featured-text-inset flex flex-col gap-8 items-start">
+                    <div className="flex flex-col gap-4">
+                      <p className="text-accent-pink text-base tracking-[1.5px] uppercase">
+                        {clientLabel}
+                      </p>
+                      <h2 className={textColorInverse ? 'text-text-inverse' : 'text-text-body'}>
+                        {title}
+                      </h2>
+                      <p className={`leading-relaxed ${textColorInverse ? 'text-gray-300' : 'text-text-secondary'}`}>
+                        {description}
+                      </p>
+                    </div>
+                    <Button
+                      as="a"
+                      href={`/projects/${slug}`}
+                      variant={textColorInverse ? 'light' : 'dark'}
                     >
-                      {project.title}
-                    </h2>
-                    <p
-                      className={`leading-relaxed ${
-                        project.textColorInverse ? 'text-gray-300' : 'text-text-secondary'
-                      }`}
-                    >
-                      {project.description}
-                    </p>
+                      {buttonLabel}
+                    </Button>
                   </div>
-                  <Button
-                    as="a"
-                    href={`/projects/${project.slug}`}
-                    variant={project.textColorInverse ? 'light' : 'dark'}
-                  >
-                    {project.buttonLabel}
-                  </Button>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </section>
       )}
     </div>
