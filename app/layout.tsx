@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Open_Sans } from 'next/font/google'
 import './globals.css'
-import LayoutShell from '@/components/layout/LayoutShell'
 
 const openSans = Open_Sans({
   subsets: ['latin'],
@@ -25,9 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={openSans.variable}>
       <body className="font-sans">
-        <LayoutShell>
-          {children}
-        </LayoutShell>
+        {children}
       </body>
     </html>
   )

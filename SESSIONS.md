@@ -2,6 +2,28 @@
 
 ---
 
+## 2026-03-24 — Phase 5 Continued: CMS Schema Polish & Studio UX
+
+### Accomplished
+- **Highlight decorator — visual feedback** — renamed `homePage.ts` → `.tsx`; added `component` prop to `highlight` decorator so selected text shows a pink background tint in the Studio editor
+- **About page schema** — renamed to `.tsx`; converted `headline` → portable text with `highlight` decorator; converted `introBio`, `personalBio`, `moreAboutMe` → rich text arrays with full default toolbar (bold, italic, underline, bullets, etc.)
+- **About page** — now server component fetching from Sanity; wired `clientLogos` (renders real logo images via `urlFor`); wired `skills` (maps 0–10 Sanity level → 0–100 bar width); wired `zoneLabels`; `SkillBars` updated to accept optional `skills` + `zoneLabels` props with hardcoded fallbacks
+- **Resume download buttons** — wired to `resumeFile`/`bigResumeFile` Sanity assets; added `/api/download` proxy route that forces browser download (bypasses cross-origin `Content-Disposition` issue with Sanity CDN); buttons hidden until files are uploaded
+- **Contact page schema** — renamed to `.tsx`; `headline` → portable text with `highlight` decorator; `introParagraph` → rich text with full toolbar
+- **Contact page** — server component fetching from Sanity with PortableText renderers; fallback content preserved
+- **Color picker** — installed `@sanity/color-input` + `styled-components`; registered `colorInput()` plugin; changed `featuredBackground` on project to `type: 'color'`; updated `featuredProjectsQuery` + `projectBySlugQuery` to extract `.hex` via GROQ
+- **Block background colors** — all `backgroundColor` fields in `sharedBlockFields` and `imageBlock`, plus `accentColor` in `noteBlock`, changed to `type: 'color'`; `BlockRenderer` updated with `toHexColor()` normalizer (handles both legacy strings and new color objects)
+- **Design palette swatches** — added `SITE_COLORS` constant (`{ hex }` format) to project schema; applied as `colorList` option to all color picker fields so brand colors are one-click swatches
+
+### Next Steps
+1. **Enter real content in Sanity Studio** — projects, images, copy at `/studio`
+2. **Contact form** — wire submission handler (SendGrid env vars in `.env.local`)
+3. **SEO / metadata** — `generateMetadata` per page, OG images
+4. **Performance pass** — image optimization audit, Lighthouse run
+5. **Deploy** — Vercel deploy with env vars
+
+---
+
 ## 2026-03-24 — Phase 5: Sanity CMS Integration
 
 ### Accomplished

@@ -22,7 +22,7 @@ export const featuredProjectsQuery = groq`*[_type == "project" && featured == tr
   featuredTitle,
   featuredDescription,
   featuredButtonLabel,
-  featuredBackground,
+  "featuredBackground": featuredBackground.hex,
   featuredTextColorInverse
 }`
 
@@ -50,7 +50,7 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
   featuredTitle,
   featuredDescription,
   featuredButtonLabel,
-  featuredBackground,
+  "featuredBackground": featuredBackground.hex,
   featuredTextColorInverse,
   contentBlocks[],
   order
@@ -62,7 +62,11 @@ export const projectSlugsQuery = groq`*[_type == "project" && defined(slug.curre
 }`
 
 // ── About Page ───────────────────────────────────────────────────────────────
-export const aboutPageQuery = groq`*[_type == "aboutPage"][0]`
+export const aboutPageQuery = groq`*[_type == "aboutPage"][0] {
+  ...,
+  "resumeFileUrl": resumeFile.asset->url,
+  "bigResumeFileUrl": bigResumeFile.asset->url
+}`
 
 // ── Contact Page ─────────────────────────────────────────────────────────────
 export const contactPageQuery = groq`*[_type == "contactPage"][0]`

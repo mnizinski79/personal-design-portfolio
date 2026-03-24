@@ -20,14 +20,6 @@ interface BlockRendererProps {
   blocks: Block[]
 }
 
-function BlockLabel({ name }: { name: string }) {
-  return (
-    <div className="bg-accent-pink text-white text-xs font-semibold px-3 py-1 tracking-widest uppercase">
-      Block: {name}
-    </div>
-  )
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function toImageUrl(ref: any): string | undefined {
   if (!ref) return undefined
@@ -35,21 +27,30 @@ function toImageUrl(ref: any): string | undefined {
   try { return urlFor(ref).url() } catch { return undefined }
 }
 
+// Normalizes a color value from Sanity — either a plain hex string or a
+// color-input object { hex: string } — to a hex string or undefined.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function toHexColor(value: any): string | undefined {
+  if (!value) return undefined
+  if (typeof value === 'string') return value
+  if (typeof value === 'object' && typeof value.hex === 'string') return value.hex
+  return undefined
+}
+
 export default function BlockRenderer({ blocks }: BlockRendererProps) {
   return (
     <>
       {blocks.map((block) => {
         const sharedProps = {
-          backgroundColor: block.backgroundColor,
+          backgroundColor: toHexColor(block.backgroundColor),
           textColorInverse: block.textColorInverse,
         }
 
         switch (block._type) {
           case 'richText':
-            return <div key={block._key}><BlockLabel name="Rich Text" /><RichTextBlock {...sharedProps} body={block.body as never} /></div>
+            return <RichTextBlock key={block._key} {...sharedProps} body={block.body as never} />
 
           case 'tabbedGallery': {
-            // Transform Sanity image refs to URL strings for each tab
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const rawTabs = block.tabs as any[] | undefined
             const tabs = rawTabs?.map((tab) => ({
@@ -57,20 +58,18 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
               imageLeft: toImageUrl(tab.leftImage) ?? tab.imageLeft,
               imageRight: toImageUrl(tab.rightImage) ?? tab.imageRight,
             }))
-            return <div key={block._key}><BlockLabel name="Tabbed Gallery" /><TabbedGallery {...sharedProps} tabs={tabs} /></div>
+            return <TabbedGallery key={block._key} {...sharedProps} tabs={tabs} />
           }
 
           case 'columns':
             return (
-              <div key={block._key}>
-                <BlockLabel name="Columns" />
-                <Columns
-                  {...sharedProps}
-                  variant={block.variant as never}
-                  columnCount={block.columnCount as number}
-                  items={block.items as never}
-                />
-              </div>
+              <Columns
+                key={block._key}
+                {...sharedProps}
+                variant={block.variant as never}
+                columnCount={block.columnCount as number}
+                items={block.items as never}
+              />
             )
 
           // Handle both placeholder type ('image') and Sanity schema type ('imageBlock')
@@ -82,15 +81,13 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
               ?? (imgRef as string | undefined)
             const alt = (imgRef?.alt as string | undefined) ?? (block.alt as string | undefined)
             return (
-              <div key={block._key}>
-                <BlockLabel name="Image" />
-                <ImageBlock
-                  backgroundColor={block.backgroundColor}
-                  variant={block.variant as never}
-                  alt={alt}
-                  imageUrl={imageUrl}
-                />
-              </div>
+              <ImageBlock
+                key={block._key}
+                backgroundColor={toHexColor(block.backgroundColor)}
+                variant={block.variant as never}
+                alt={alt}
+                imageUrl={imageUrl}
+              />
             )
           }
 
@@ -102,34 +99,30 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
               logoUrl: toImageUrl(l.logo),
             }))
             return (
-              <div key={block._key}>
-                <BlockLabel name="Client Logos" />
-                <ClientLogosBlock
-                  {...sharedProps}
-                  logos={logos}
-                  columns={block.columns as number}
-                />
-              </div>
+              <ClientLogosBlock
+                key={block._key}
+                {...sharedProps}
+                logos={logos}
+                columns={block.columns as number}
+              />
             )
           }
 
           case 'skillBars':
-            return <div key={block._key}><BlockLabel name="Skill Bars" /><SkillBarsBlock {...sharedProps} /></div>
+            return <SkillBarsBlock key={block._key} {...sharedProps} />
 
           case 'note':
             return (
-              <div key={block._key}>
-                <BlockLabel name="Note" />
-                <Note
-                  {...sharedProps}
-                  body={block.body as never}
-                  accentColor={block.accentColor as string}
-                />
-              </div>
+              <Note
+                key={block._key}
+                {...sharedProps}
+                body={block.body as never}
+                accentColor={toHexColor(block.accentColor)}
+              />
             )
 
           case 'basicContainer':
-            return <div key={block._key}><BlockLabel name="Basic Container" /><BasicContainer {...sharedProps} body={(block.content ?? block.body) as never} /></div>
+            return <BasicContainer key={block._key} {...sharedProps} body={(block.content ?? block.body) as never} />
 
           default:
             return null

@@ -11,6 +11,7 @@
   "dependencies": {
     "@portabletext/react": "^6.0.3",
     "@sanity/client": "^7.20.0",
+    "@sanity/color-input": "^6.0.4",
     "@sanity/image-url": "^2.0.3",
     "@sanity/vision": "^5.17.1",
     "framer-motion": "^12.38.0",
@@ -20,7 +21,8 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.72.0",
-    "sanity": "^5.17.1"
+    "sanity": "^5.17.1",
+    "styled-components": "^6.3.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

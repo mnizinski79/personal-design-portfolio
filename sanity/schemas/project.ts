@@ -1,13 +1,27 @@
 import { defineField, defineType } from 'sanity'
 
+// ── Site design palette — shown as swatches in all color pickers ──────────────
+const SITE_COLORS = [
+  { hex: '#FEFEFE' }, // White
+  { hex: '#F5F5F5' }, // Light Grey
+  { hex: '#E0E0E0' }, // Border Light
+  { hex: '#BFBFBF' }, // Border Mid
+  { hex: '#474747' }, // Border Dark
+  { hex: '#2E2E2E' }, // Dark
+  { hex: '#0A0A0A' }, // Near Black
+  { hex: '#EA3B7B' }, // Accent Pink
+  { hex: '#00C4EA' }, // Accent Cyan
+]
+
 // ── Shared block fields ───────────────────────────────────────────────────────
 // Applied to all block types that support text (all except imageBlock)
 const sharedBlockFields = [
   defineField({
     name: 'backgroundColor',
-    type: 'string',
-    title: 'Background Color (hex from global palette)',
+    type: 'color',
+    title: 'Background Color',
     description: 'Leave blank to use default light background.',
+    options: { colorList: SITE_COLORS },
   }),
   defineField({
     name: 'textColorInverse',
@@ -155,9 +169,10 @@ const imageBlock = defineType({
   fields: [
     defineField({
       name: 'backgroundColor',
-      type: 'string',
-      title: 'Background Color (hex)',
+      type: 'color',
+      title: 'Background Color',
       description: 'Optional — visible behind contained or transparent images.',
+      options: { colorList: SITE_COLORS },
     }),
     defineField({
       name: 'variant',
@@ -268,9 +283,10 @@ const noteBlock = defineType({
     ...sharedBlockFields,
     defineField({
       name: 'accentColor',
-      type: 'string',
-      title: 'Accent Color (hex)',
+      type: 'color',
+      title: 'Accent Color',
       description: 'Color of the accent bar/rule above the note text.',
+      options: { colorList: SITE_COLORS },
     }),
     defineField({
       name: 'body',
@@ -347,7 +363,7 @@ export const project = defineType({
     defineField({ name: 'featuredTitle', type: 'string', title: 'Featured Card Headline' }),
     defineField({ name: 'featuredDescription', type: 'text', title: 'Featured Card Description' }),
     defineField({ name: 'featuredButtonLabel', type: 'string', title: 'Featured Card Button Label', initialValue: 'Check It Out' }),
-    defineField({ name: 'featuredBackground', type: 'string', title: 'Featured Card Background Color (hex)' }),
+    defineField({ name: 'featuredBackground', type: 'color', title: 'Featured Card Background Color', options: { colorList: SITE_COLORS } }),
     defineField({ name: 'featuredTextColorInverse', type: 'boolean', title: 'Featured Card: Use Light Text (white)', initialValue: false }),
 
     // Content blocks (page builder)

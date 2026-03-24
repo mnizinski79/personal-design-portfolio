@@ -1,7 +1,7 @@
 import { client } from '@/sanity/lib/client'
-import { featuredProjectsQuery } from '@/sanity/lib/queries'
+import { featuredProjectsQuery, homePageQuery } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
-import TransitionLink from '@/components/layout/TransitionLink'
+import { PortableText } from '@portabletext/react'
 import Button from '@/components/ui/Button'
 import Image from 'next/image'
 
@@ -22,8 +22,11 @@ const PLACEHOLDER_PROJECTS: FeaturedProject[] = [
 ]
 
 export default async function HomePage() {
-  const sanityProjects: FeaturedProject[] = await client.fetch(featuredProjectsQuery).catch(() => [])
-  const featuredProjects = sanityProjects.length > 0 ? sanityProjects : PLACEHOLDER_PROJECTS
+  const [homePage, sanityProjects] = await Promise.all([
+    client.fetch(homePageQuery).catch(() => null),
+    client.fetch(featuredProjectsQuery).catch(() => []),
+  ])
+  const featuredProjects = (sanityProjects as FeaturedProject[]).length > 0 ? sanityProjects as FeaturedProject[] : PLACEHOLDER_PROJECTS
 
   return (
     <div>
@@ -31,26 +34,51 @@ export default async function HomePage() {
       <section className="py-20">
         <div className="page-content">
           <h1 className="text-text-body mb-10">
-            Hello!
-            <br />
-            I&rsquo;m Mike, an Experienced Creative Hybrid{' '}
-            <span className="text-accent-pink">Producing Stellar Digital Products</span>
-            .
+            {homePage?.heroText ? (
+              <PortableText
+                value={homePage.heroText}
+                components={{
+                  block: { normal: ({ children }) => <>{children}</> },
+                  marks: {
+                    highlight: ({ children }) => (
+                      <span className="text-accent-pink">{children}</span>
+                    ),
+                  },
+                }}
+              />
+            ) : (
+              <>
+                Hello!
+                <br />
+                I&rsquo;m Mike, an Experienced Creative Hybrid{' '}
+                <span className="text-accent-pink">Producing Stellar Digital Products</span>
+                .
+              </>
+            )}
           </h1>
 
           <div className="text-text-secondary space-y-6">
-            <p>
-              I&rsquo;m a multi-disciplinary creative who solves problems across the digital
-              spectrum. In my 15 year career, I&rsquo;ve led teams large and small for clients
-              in nearly every industry.
-            </p>
-            <p>
-              In my work, I look for functional, simple ways to drive interaction and
-              engagement. I live in the details, looking for better understanding at every
-              level. I believe that great messaging, combined with engaging experiences,
-              creates a connection with people that goes beyond just surface level. It&rsquo;s
-              what makes good creative great creative and a great product an essential life tool.
-            </p>
+            {homePage?.bioText ? (
+              <PortableText
+                value={homePage.bioText}
+                components={{ block: { normal: ({ children }) => <p>{children}</p> } }}
+              />
+            ) : (
+              <>
+                <p>
+                  I&rsquo;m a multi-disciplinary creative who solves problems across the digital
+                  spectrum. In my 15 year career, I&rsquo;ve led teams large and small for clients
+                  in nearly every industry.
+                </p>
+                <p>
+                  In my work, I look for functional, simple ways to drive interaction and
+                  engagement. I live in the details, looking for better understanding at every
+                  level. I believe that great messaging, combined with engaging experiences,
+                  creates a connection with people that goes beyond just surface level. It&rsquo;s
+                  what makes good creative great creative and a great product an essential life tool.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>

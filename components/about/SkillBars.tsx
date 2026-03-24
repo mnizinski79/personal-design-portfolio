@@ -7,28 +7,35 @@ interface Skill {
   level: number // 0–100
 }
 
-const ZONE_LABELS = [
+const DEFAULT_ZONE_LABELS = [
   "Don't Hire Me for This",
   'Enough to be Dangerous',
   'Jedi Master',
 ]
 
-const SKILLS: Skill[] = [
-  { label: 'iOS / Native Dev',       level: 20 },
-  { label: 'Node.js / Backend',      level: 30 },
-  { label: 'Motion Graphics',        level: 35 },
-  { label: 'JavaScript / React',     level: 60 },
-  { label: 'HTML / CSS',             level: 72 },
-  { label: 'Adobe Photoshop',        level: 65 },
-  { label: 'UX Research',            level: 70 },
-  { label: 'Figma / Sketch',         level: 95 },
-  { label: 'Adobe Illustrator',      level: 92 },
-  { label: 'Brand Identity',         level: 90 },
-  { label: 'UI / Interaction Design',level: 88 },
+const DEFAULT_SKILLS: Skill[] = [
+  { label: 'iOS / Native Dev',        level: 20 },
+  { label: 'Node.js / Backend',       level: 30 },
+  { label: 'Motion Graphics',         level: 35 },
+  { label: 'JavaScript / React',      level: 60 },
+  { label: 'HTML / CSS',              level: 72 },
+  { label: 'Adobe Photoshop',         level: 65 },
+  { label: 'UX Research',             level: 70 },
+  { label: 'Figma / Sketch',          level: 95 },
+  { label: 'Adobe Illustrator',       level: 92 },
+  { label: 'Brand Identity',          level: 90 },
+  { label: 'UI / Interaction Design', level: 88 },
 ]
 
-export default function SkillBars() {
+interface SkillBarsProps {
+  skills?: Skill[]
+  zoneLabels?: string[]
+}
+
+export default function SkillBars({ skills, zoneLabels }: SkillBarsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const resolvedSkills = skills ?? DEFAULT_SKILLS
+  const resolvedZoneLabels = zoneLabels ?? DEFAULT_ZONE_LABELS
 
   useEffect(() => {
     const container = containerRef.current
@@ -56,14 +63,12 @@ export default function SkillBars() {
     <div ref={containerRef}>
 
       {/* ── Header row ───────────────────────────────────────────────────────── */}
-      {/* Desktop: "Skills" H2 left (168px) + zone column labels right         */}
-      {/* Mobile: "Skills" H2 only — zone labels hidden                        */}
       <div className="flex items-end mb-4">
         <h2 className="text-accent-pink shrink-0 w-[168px]">
           Skills
         </h2>
         <div className="hidden md:flex flex-1 gap-6 pb-2">
-          {ZONE_LABELS.map((label) => (
+          {resolvedZoneLabels.map((label) => (
             <p key={label} className="body-small flex-1 text-center text-text-secondary">
               {label}
             </p>
@@ -72,11 +77,8 @@ export default function SkillBars() {
       </div>
 
       {/* ── Skill rows ───────────────────────────────────────────────────────── */}
-      {/* Outer wrapper is relative so the divider overlay can span all rows   */}
       <div className="relative">
 
-        {/* Single divider overlay spanning all rows — desktop only            */}
-        {/* left: 168px offsets past the label column; lines at zone thirds    */}
         <div
           className="hidden md:block absolute -top-[28px] -bottom-[12px] pointer-events-none z-[1]"
           style={{ left: '168px', right: 0 }}
@@ -87,15 +89,13 @@ export default function SkillBars() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {SKILLS.map((skill) => (
+          {resolvedSkills.map((skill) => (
             <div key={skill.label} className="flex flex-col md:flex-row md:items-center">
 
-              {/* Skill label */}
               <p className="body-small font-semibold text-text-secondary shrink-0 mb-2 md:mb-0 md:w-[168px]">
                 {skill.label}
               </p>
 
-              {/* Bar: gray track + cyan fill (fill z-[2] renders above dividers) */}
               <div className="relative flex-1 h-3">
                 <div className="absolute inset-0 bg-[#d9d9d9] rounded-pill" />
                 <div

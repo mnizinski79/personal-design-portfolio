@@ -1,4 +1,20 @@
+import React from 'react'
 import { defineField, defineType } from 'sanity'
+
+const highlightDecorator = {
+  title: 'Highlight',
+  value: 'highlight',
+  component: ({ children }: { children: React.ReactNode }) => (
+    <span style={{ backgroundColor: 'rgba(234, 59, 123, 0.15)', color: '#EA3B7B', borderRadius: '2px', padding: '0 2px' }}>
+      {children}
+    </span>
+  ),
+}
+
+const richTextBlock = {
+  type: 'block',
+  styles: [{ title: 'Normal', value: 'normal' }],
+}
 
 export const aboutPage = defineType({
   name: 'aboutPage',
@@ -7,11 +23,26 @@ export const aboutPage = defineType({
   fields: [
     defineField({
       name: 'headline',
-      type: 'string',
+      type: 'array',
       title: 'Page Headline',
-      initialValue: 'Who is this Mike Guy Anyway?',
+      description: 'Use Shift+Enter for line breaks. Select text and click "Highlight" to make it pink.',
+      of: [{
+        type: 'block',
+        styles: [{ title: 'Normal', value: 'normal' }],
+        lists: [],
+        marks: {
+          decorators: [highlightDecorator],
+          annotations: [],
+        },
+      }],
     }),
-    defineField({ name: 'introBio', type: 'text', title: 'Intro Bio Paragraph' }),
+    defineField({
+      name: 'introBio',
+      type: 'array',
+      title: 'Intro Bio',
+      description: 'Supports multiple paragraphs.',
+      of: [richTextBlock],
+    }),
     defineField({
       name: 'clientLogos',
       type: 'object',
@@ -34,7 +65,13 @@ export const aboutPage = defineType({
         }),
       ],
     }),
-    defineField({ name: 'personalBio', type: 'text', title: 'Personal Background Paragraph' }),
+    defineField({
+      name: 'personalBio',
+      type: 'array',
+      title: 'Personal Background',
+      description: 'Supports multiple paragraphs.',
+      of: [richTextBlock],
+    }),
     defineField({
       name: 'skills',
       type: 'object',
@@ -58,7 +95,13 @@ export const aboutPage = defineType({
         }),
       ],
     }),
-    defineField({ name: 'moreAboutMe', type: 'text', title: '"A Bit More About Me" Paragraph' }),
+    defineField({
+      name: 'moreAboutMe',
+      type: 'array',
+      title: '"A Bit More About Me"',
+      description: 'Supports multiple paragraphs.',
+      of: [richTextBlock],
+    }),
     defineField({ name: 'resumeFile', type: 'file', title: 'Primary Resume File' }),
     defineField({ name: 'resumeLabel', type: 'string', title: 'Primary Resume Button Label', initialValue: 'Download My Resume' }),
     defineField({ name: 'bigResumeFile', type: 'file', title: 'Extended Resume File' }),
