@@ -20,8 +20,8 @@ export default function ImageBlock({
   }
 
   return (
-    <div className="py-16" style={backgroundColor ? { backgroundColor } : undefined}>
-      <div className="page-content">
+    <div style={backgroundColor ? { backgroundColor } : undefined}>
+      <div className="content-grid py-20">
         <div className="w-full aspect-[2360/1060] relative rounded-small overflow-hidden">
           <Image src="/assets/container-width-image.png" alt={alt || 'Project image'} fill className="object-cover" />
         </div>

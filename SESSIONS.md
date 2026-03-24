@@ -2,6 +2,27 @@
 
 ---
 
+## 2026-03-24 — Phase 4 Polish: Block Layout Refinements & Mobile QA
+
+### Accomplished
+- **TabbedGallery mobile** — tabs in normal flow above stacked carousels; desktop layout (absolute tabs, side-by-side staggered carousels) preserved; `gap-0 md:gap-6` so carousels touch on mobile
+- **TabbedGallery images** — auto-height (`w-full h-auto`), right carousel starts at y=0, left staggered 178px down on desktop; `sizes` updated for responsive loading
+- **content-grid utility** — `.content-grid` CSS class: `max-width: 1280px`, centered, `px-6` mobile / `px-[156px]` desktop; applied to all full-width blocks (ImageBlock, BasicContainer, ClientLogosBlock, Columns, Note)
+- **Featured project (home page)** — bg div stays full-width; inner content-grid capped at 1280px; `.featured-text-inset` recalibrated to 6-col width (242px inset at 1280px+)
+- **Columns twoColumn mobile** — gradient replaced with plain `#ffffff` via `.two-col-bg` CSS class (gradient only at `md+`)
+- **RichTextBlock** — already complete: `@portabletext/react` with H2, H3, normal, link renderers
+- **SkillBarsBlock** — already complete: wraps About page IntersectionObserver animation
+- **Mobile QA pass** — all blocks verified at 375px: masthead, hamburger, rich text, tabbed gallery, columns, note, image, client logos, basic container ✓
+
+### Next Steps
+1. **Sanity CMS integration** — connect schemas, wire GROQ queries to pages/blocks
+2. **Real project content** — populate actual case studies, images, copy
+3. **Contact form** — wire up submission handler (email or form service)
+4. **SEO / metadata** — `generateMetadata` per page, OG images
+5. **Performance pass** — image optimization audit, Lighthouse run
+
+---
+
 ## 2026-03-23 — Phase 4: Projects Grid, Detail Page & Block Components
 
 ### Accomplished

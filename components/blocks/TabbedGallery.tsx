@@ -34,9 +34,11 @@ export default function TabbedGallery({
   const active = items[activeTab]
 
   return (
-    <div className="pt-20 pb-16" style={{ backgroundColor: bg }}>
-      {/* Tab buttons */}
-      <div className="flex gap-6 items-end px-6 md:px-[156px] mb-8">
+    <div className="relative" style={{ backgroundColor: bg }}>
+      {/* Tab buttons
+          Mobile:  in normal flow, with top/bottom padding
+          Desktop: absolutely positioned overlaying the images */}
+      <div className="content-grid flex gap-6 items-end pt-10 pb-6 relative md:absolute md:top-20 md:z-10 md:left-0 md:right-0 md:mx-auto md:pt-0 md:pb-0">
         {items.map((tab, i) => (
           <button
             key={tab.label}
@@ -51,49 +53,55 @@ export default function TabbedGallery({
         ))}
       </div>
 
-      {/* Two independent column carousels — each clips to its own window, both slide on tab change */}
-      <div className="px-6 md:px-[156px] flex gap-6 h-[640px]">
+      {/* Carousels
+          Mobile:  stacked vertically, full width, bottom padding
+          Desktop: side-by-side, left offset 178px */}
+      <div className="content-grid flex flex-col md:flex-row gap-0 md:gap-6 items-start pb-10 md:pb-0">
 
-        {/* Left carousel — shows bottom of each portrait image */}
-        <div className="flex-1 overflow-hidden rounded-small">
+        {/* Left carousel — mobile: no offset; desktop: offset down 178px */}
+        <div className="w-full md:flex-1 overflow-hidden rounded-small md:mt-[178px]">
           <div
-            className="flex h-full transition-transform duration-500 ease-in-out"
+            className="flex transition-transform duration-500 ease-in-out"
             style={{
               width: `${items.length * 100}%`,
               transform: `translateX(-${(activeTab / items.length) * 100}%)`,
             }}
           >
             {items.map((tab) => (
-              <div key={tab.label} className="relative h-full" style={{ width: `${100 / items.length}%` }}>
+              <div key={tab.label} style={{ width: `${100 / items.length}%` }}>
                 <Image
                   src={tab.imageLeft ?? '/assets/tab-carousel-image.png'}
                   alt={`${tab.label} view 1`}
-                  fill
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   loading="eager"
-                  className="object-cover object-bottom"
+                  className="w-full h-auto block"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Right carousel — shows top of each portrait image */}
-        <div className="flex-1 overflow-hidden rounded-small">
+        {/* Right carousel */}
+        <div className="w-full md:flex-1 overflow-hidden rounded-small">
           <div
-            className="flex h-full transition-transform duration-500 ease-in-out"
+            className="flex transition-transform duration-500 ease-in-out"
             style={{
               width: `${items.length * 100}%`,
               transform: `translateX(-${(activeTab / items.length) * 100}%)`,
             }}
           >
             {items.map((tab) => (
-              <div key={tab.label} className="relative h-full" style={{ width: `${100 / items.length}%` }}>
+              <div key={tab.label} style={{ width: `${100 / items.length}%` }}>
                 <Image
                   src={tab.imageRight ?? '/assets/tab-carousel-image.png'}
                   alt={`${tab.label} view 2`}
-                  fill
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   loading="eager"
-                  className="object-cover object-top"
+                  className="w-full h-auto block"
                 />
               </div>
             ))}

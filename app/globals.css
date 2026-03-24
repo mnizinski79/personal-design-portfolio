@@ -91,25 +91,49 @@
 .sidebar-nav::-webkit-scrollbar { display: none; }
 .sidebar-nav { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* ── Two-column block gradient — desktop only, plain white on mobile ─────── */
+.two-col-bg { background-color: #ffffff; }
+@media (min-width: 768px) {
+  .two-col-bg { background-image: linear-gradient(90deg, #ffffff 50%, #dbdbdb 50.01%); }
+}
+
 /* ─── Featured project section — fluid horizontal padding ──────────────────── */
-/* Outer section: scales from 83px (768px viewport) → 156px (1440px viewport)  */
-/* Inner text inset: 0px below 900px → 288px at 1440px, fluid in between        */
+/* Outer section: vertical padding only (horizontal handled by content-grid)    */
+/* Inner text inset: 0px at 768px → 242px at 1280px+ (6 of 12 cols = 50% well) */
 .featured-section {
-  padding-left: 24px;
-  padding-right: 24px;
   padding-top: 40px;
   padding-bottom: 40px;
 }
 @media (min-width: 768px) {
   .featured-section {
-    padding-left: min(156px, 10.833vw);
-    padding-right: min(156px, 10.833vw);
     padding-top: 80px;
     padding-bottom: 80px;
   }
   .featured-text-inset {
-    padding-left: max(0px, min(288px, calc((100vw - 900px) * 0.5333)));
-    padding-right: max(0px, min(288px, calc((100vw - 900px) * 0.5333)));
+    /* content-grid well = 100vw - 312px (156px×2 padding), capped at 968px     */
+    /* 6-col text = 50% of well → inset = 25% each side, max 242px              */
+    padding-left: max(0px, min(242px, calc((100vw - 312px) / 4)));
+    padding-right: max(0px, min(242px, calc((100vw - 312px) / 4)));
+  }
+}
+
+/* ─── 12-column content grid ────────────────────────────────────────────────── */
+/* Used by full-width blocks (Columns, Image, BasicContainer, etc.) for their   */
+/* inner content area. Background wrappers stay full-width; only the content    */
+/* well is capped at 1280px and centered.                                        */
+.content-grid {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+@media (min-width: 768px) {
+  .content-grid {
+    padding-left: 156px;
+    padding-right: 156px;
   }
 }
 

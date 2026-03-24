@@ -43,15 +43,12 @@ export default function Note({
 
   return (
     <div
-      className="py-16"
+      className="px-6 flex flex-col gap-4"
       style={backgroundColor ? { backgroundColor } : undefined}
     >
-      <div className={`page-content ${textColor}`}>
-        {/* Accent bar above text */}
-        <div
-          className="w-12 h-1 mb-6 rounded-pill"
-          style={{ backgroundColor: accentColor }}
-        />
+      {/* Accent bar — 64px wide, 2px tall */}
+      <div className="w-16 h-[2px]" style={{ backgroundColor: accentColor }} />
+      <div className={textColor}>
         <PortableText value={body ?? PLACEHOLDER_BODY} components={components} />
       </div>
     </div>

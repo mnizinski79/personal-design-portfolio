@@ -21,9 +21,14 @@ const PLACEHOLDER_PROJECT: Project = {
   contentBlocks: [
     { _type: 'richText', _key: 'b1' },
     { _type: 'tabbedGallery', _key: 'b2', textColorInverse: true, backgroundColor: '#2E2E2E' },
-    { _type: 'columns', _key: 'b3', variant: 'twoColumn' },
+    // Columns variants
+    { _type: 'columns', _key: 'b3a', variant: 'twoColumn' },
+    { _type: 'columns', _key: 'b3b', variant: 'multiColumn', columnCount: 4 },
+    { _type: 'columns', _key: 'b3c', variant: 'tiles', columnCount: 3 },
     { _type: 'note', _key: 'b4' },
-    { _type: 'image', _key: 'b5', variant: 'container' },
+    // Image variants
+    { _type: 'image', _key: 'b5a', variant: 'fullWidth' },
+    { _type: 'image', _key: 'b5b', variant: 'container' },
     { _type: 'clientLogos', _key: 'b6' },
     { _type: 'basicContainer', _key: 'b7' },
   ],

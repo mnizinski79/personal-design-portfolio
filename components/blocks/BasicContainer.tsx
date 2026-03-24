@@ -53,10 +53,9 @@ export default function BasicContainer({
 
   return (
     <div
-      className={`py-16 ${textColor}`}
       style={backgroundColor ? { backgroundColor } : undefined}
     >
-      <div className="page-content">
+      <div className={`content-grid py-20 ${textColor}`}>
         <PortableText value={body ?? PLACEHOLDER_BODY} components={components} />
       </div>
     </div>

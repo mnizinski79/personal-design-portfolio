@@ -51,37 +51,38 @@ export default function HomePage() {
             <div
               key={project.slug}
               style={{ backgroundColor: project.background }}
-              className="featured-section flex flex-col gap-10"
             >
-              {/* Image: w-full within the padded container */}
-              <div className="w-full aspect-[1128/529] bg-bg-mid rounded-small" />
+              <div className="featured-section content-grid flex flex-col gap-10">
+                {/* Image placeholder: w-full within the padded container */}
+                <div className="w-full aspect-[1128/529] bg-bg-mid rounded-small" />
 
-              {/* Text: fluid inset that scales with viewport */}
-              <div className="featured-text-inset flex flex-col gap-8 items-start">
-                <div className="flex flex-col gap-4">
-                  <p className="text-accent-pink text-base tracking-[1.5px] uppercase">
-                    {project.clientLabel}
-                  </p>
-                  <h2
-                    className={project.textColorInverse ? 'text-text-inverse' : 'text-text-body'}
+                {/* Text: fluid inset that scales with viewport */}
+                <div className="featured-text-inset flex flex-col gap-8 items-start">
+                  <div className="flex flex-col gap-4">
+                    <p className="text-accent-pink text-base tracking-[1.5px] uppercase">
+                      {project.clientLabel}
+                    </p>
+                    <h2
+                      className={project.textColorInverse ? 'text-text-inverse' : 'text-text-body'}
+                    >
+                      {project.title}
+                    </h2>
+                    <p
+                      className={`leading-relaxed ${
+                        project.textColorInverse ? 'text-gray-300' : 'text-text-secondary'
+                      }`}
+                    >
+                      {project.description}
+                    </p>
+                  </div>
+                  <Button
+                    as="a"
+                    href={`/projects/${project.slug}`}
+                    variant={project.textColorInverse ? 'light' : 'dark'}
                   >
-                    {project.title}
-                  </h2>
-                  <p
-                    className={`leading-relaxed ${
-                      project.textColorInverse ? 'text-gray-300' : 'text-text-secondary'
-                    }`}
-                  >
-                    {project.description}
-                  </p>
+                    {project.buttonLabel}
+                  </Button>
                 </div>
-                <Button
-                  as="a"
-                  href={`/projects/${project.slug}`}
-                  variant={project.textColorInverse ? 'light' : 'dark'}
-                >
-                  {project.buttonLabel}
-                </Button>
               </div>
             </div>
           ))}

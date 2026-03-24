@@ -32,7 +32,7 @@ export default function ClientLogosBlock({
       className="py-16"
       style={backgroundColor ? { backgroundColor } : undefined}
     >
-      <div className="page-content">
+      <div className="content-grid">
         <div
           className="grid"
           style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
@@ -45,7 +45,7 @@ export default function ClientLogosBlock({
             return (
               <div
                 key={logo.name}
-                className={`flex items-center justify-center aspect-square text-sm font-medium text-center px-2 ${textColor} ${rightBorder} ${bottomBorder}`}
+                className={`flex items-center justify-center aspect-square text-sm font-medium text-center p-6 ${textColor} ${rightBorder} ${bottomBorder}`}
               >
                 <div className="relative w-full h-[60px]">
                   <Image
