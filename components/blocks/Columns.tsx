@@ -1,4 +1,26 @@
+import Image from 'next/image'
+import { PortableText } from '@portabletext/react'
+import type { PortableTextBlock } from '@portabletext/types'
+import { urlFor } from '@/sanity/lib/image'
+
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface ColumnBlock {
+  _type: string
+  _key?: string
+  // columnImage
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  image?: Record<string, any>
+  // columnRichText / columnNote
+  body?: PortableTextBlock[]
+  // columnNote
+  accentColor?: string | { hex: string }
+}
+
 interface ColumnItem {
+  _key?: string
+  blocks?: ColumnBlock[]
+  // Legacy fallback (used by placeholder data)
   heading?: string
   body?: string
 }
@@ -11,6 +33,81 @@ interface ColumnsProps {
   backgroundColor?: string
   textColorInverse?: boolean
 }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function toHex(value: string | { hex: string } | undefined): string {
+  if (!value) return '#EA3B7B'
+  if (typeof value === 'string') return value
+  return value.hex
+}
+
+const ptComponents = {
+  block: {
+    normal: ({ children }: { children?: React.ReactNode }) => <p className="mb-3 last:mb-0">{children}</p>,
+    h1: ({ children }: { children?: React.ReactNode }) => <h1 className="font-light mb-4">{children}</h1>,
+    h2: ({ children }: { children?: React.ReactNode }) => <h2 className="mb-4">{children}</h2>,
+    h3: ({ children }: { children?: React.ReactNode }) => <h3 className="mb-3">{children}</h3>,
+  },
+}
+
+const ptNoteComponents = {
+  block: {
+    normal: ({ children }: { children?: React.ReactNode }) => <p className="body-small mb-3 last:mb-0">{children}</p>,
+    h2: ({ children }: { children?: React.ReactNode }) => <h2 className="mb-4">{children}</h2>,
+    h3: ({ children }: { children?: React.ReactNode }) => <h3 className="mb-3">{children}</h3>,
+  },
+}
+
+function ColumnBlockItem({
+  block,
+  bodyColor,
+}: {
+  block: ColumnBlock
+  bodyColor: string
+}) {
+  if (block._type === 'columnImage') {
+    const imgUrl = block.image?.asset ? urlFor(block.image).url() : null
+    if (!imgUrl) return null
+    return (
+      <div className="relative w-full">
+        <Image
+          src={imgUrl}
+          alt={block.image?.alt ?? ''}
+          width={800}
+          height={600}
+          className="w-full h-auto"
+        />
+      </div>
+    )
+  }
+
+  if (block._type === 'columnRichText') {
+    if (!block.body?.length) return null
+    return (
+      <div className={bodyColor}>
+        <PortableText value={block.body} components={ptComponents as never} />
+      </div>
+    )
+  }
+
+  if (block._type === 'columnNote') {
+    return (
+      <div className="px-6 flex flex-col gap-4">
+        <div className="w-16 h-[2px]" style={{ backgroundColor: toHex(block.accentColor) }} />
+        {block.body?.length ? (
+          <div className={bodyColor}>
+            <PortableText value={block.body} components={ptNoteComponents as never} />
+          </div>
+        ) : null}
+      </div>
+    )
+  }
+
+  return null
+}
+
+// ── Placeholder data ──────────────────────────────────────────────────────────
 
 const PLACEHOLDER_ITEMS: ColumnItem[] = [
   { heading: 'Discovery',  body: 'We start every engagement with deep research into the problem space, users, and competitive landscape.' },
@@ -42,6 +139,26 @@ const GRID_COLS: Record<number, string> = {
   6: 'md:grid-cols-6',
 }
 
+// ── Column content renderer ───────────────────────────────────────────────────
+
+function renderColumnContent(item: ColumnItem, bodyColor: string, textColor: string) {
+  // New blocks-based format from Sanity
+  if (item.blocks?.length) {
+    return item.blocks.map((block, i) => (
+      <ColumnBlockItem key={block._key ?? i} block={block} bodyColor={bodyColor} />
+    ))
+  }
+  // Legacy heading/body (placeholder data)
+  return (
+    <>
+      {item.heading && <h1 className={`font-light ${textColor}`}>{item.heading}</h1>}
+      {item.body && <p className={bodyColor}>{item.body}</p>}
+    </>
+  )
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
 export default function Columns({
   variant = 'twoColumn',
   columnCount = 3,
@@ -61,14 +178,11 @@ export default function Columns({
         style={backgroundColor ? { backgroundColor } : undefined}
       >
         <div className="content-grid flex flex-col md:flex-row gap-10 md:gap-[216px] items-start">
-          <div className="flex-1 flex flex-col gap-10">
-            {data[0]?.heading && (
-              <h1 className={`font-light ${textColor}`}>{data[0].heading}</h1>
-            )}
-            {data[0]?.body && <p className={bodyColor}>{data[0].body}</p>}
+          <div className="flex-1 flex flex-col gap-6">
+            {renderColumnContent(data[0] ?? {}, bodyColor, textColor)}
           </div>
-          <div className="flex-1 flex flex-col gap-10">
-            {data[1]?.body && <p className={bodyColor}>{data[1].body}</p>}
+          <div className="flex-1 flex flex-col gap-6">
+            {renderColumnContent(data[1] ?? {}, bodyColor, textColor)}
           </div>
         </div>
       </div>
@@ -80,14 +194,11 @@ export default function Columns({
     const data = items ?? PLACEHOLDER_ITEMS.slice(0, columnCount)
     const colsClass = GRID_COLS[columnCount] ?? 'md:grid-cols-3'
     return (
-      <div
-        style={backgroundColor ? { backgroundColor } : undefined}
-    >
-      <div className={`content-grid py-20 grid grid-cols-1 ${colsClass} gap-6`}>
+      <div style={backgroundColor ? { backgroundColor } : undefined}>
+        <div className={`content-grid py-20 grid grid-cols-1 ${colsClass} gap-6`}>
           {data.map((item, i) => (
-            <div key={i} className="flex flex-col gap-3">
-              {item.heading && <h3 className={textColor}>{item.heading}</h3>}
-              {item.body && <p className={bodyColor}>{item.body}</p>}
+            <div key={item._key ?? i} className="flex flex-col gap-3">
+              {renderColumnContent(item, bodyColor, textColor)}
             </div>
           ))}
         </div>
@@ -99,14 +210,11 @@ export default function Columns({
   const data = items ?? PLACEHOLDER_ITEMS
   const colsClass = GRID_COLS[columnCount] ?? 'md:grid-cols-3'
   return (
-    <div
-      style={backgroundColor ? { backgroundColor } : undefined}
-    >
+    <div style={backgroundColor ? { backgroundColor } : undefined}>
       <div className={`content-grid py-20 grid grid-cols-2 ${colsClass} gap-6`}>
         {data.map((item, i) => (
-          <div key={i} className="flex flex-col gap-3">
-            {item.heading && <h3 className={textColor}>{item.heading}</h3>}
-            {item.body && <p className={bodyColor}>{item.body}</p>}
+          <div key={item._key ?? i} className="flex flex-col gap-3">
+            {renderColumnContent(item, bodyColor, textColor)}
           </div>
         ))}
       </div>

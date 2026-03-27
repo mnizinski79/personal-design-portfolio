@@ -133,25 +133,91 @@ const columnsBlock = defineType({
     defineField({
       name: 'columnContent',
       type: 'array',
-      title: 'Column Content',
+      title: 'Columns',
+      description: 'One entry per column. Each column holds an ordered list of content blocks.',
       of: [{
         type: 'object',
+        name: 'column',
+        title: 'Column',
         fields: [
-          {
-            name: 'contentType',
-            type: 'string',
-            title: 'Content Type',
-            options: { list: ['image', 'richText'], layout: 'radio' },
-          },
-          { name: 'image', type: 'image', title: 'Image', options: { hotspot: true } },
-          {
-            name: 'text',
+          defineField({
+            name: 'blocks',
             type: 'array',
-            title: 'Rich Text',
-            of: [{ type: 'block' }],
-          },
+            title: 'Content Blocks',
+            description: 'Drag to reorder. Each block can be an image, rich text, or note.',
+            of: [
+              {
+                type: 'object',
+                name: 'columnImage',
+                title: 'Image',
+                fields: [
+                  {
+                    name: 'image',
+                    type: 'image',
+                    title: 'Image',
+                    options: { hotspot: true },
+                    fields: [{ name: 'alt', type: 'string', title: 'Alt Text' }],
+                  },
+                ],
+                preview: { select: { media: 'image' }, prepare: () => ({ title: 'Image' }) },
+              },
+              {
+                type: 'object',
+                name: 'columnRichText',
+                title: 'Rich Text',
+                fields: [
+                  {
+                    name: 'body',
+                    type: 'array',
+                    title: 'Content',
+                    of: [{
+                      type: 'block',
+                      styles: [
+                        { title: 'Normal', value: 'normal' },
+                        { title: 'H1', value: 'h1' },
+                        { title: 'H2', value: 'h2' },
+                        { title: 'H3', value: 'h3' },
+                      ],
+                      marks: {
+                        decorators: [
+                          { title: 'Strong', value: 'strong' },
+                          { title: 'Emphasis', value: 'em' },
+                        ],
+                      },
+                    }],
+                  },
+                ],
+                preview: { prepare: () => ({ title: 'Rich Text' }) },
+              },
+              {
+                type: 'object',
+                name: 'columnNote',
+                title: 'Note',
+                fields: [
+                  {
+                    name: 'accentColor',
+                    type: 'color',
+                    title: 'Accent Color',
+                    options: { colorList: SITE_COLORS },
+                  },
+                  {
+                    name: 'body',
+                    type: 'array',
+                    title: 'Note Content',
+                    of: [{ type: 'block' }],
+                  },
+                ],
+                preview: { prepare: () => ({ title: 'Note' }) },
+              },
+            ],
+          }),
         ],
-        preview: { select: { title: 'contentType', media: 'image' } },
+        preview: {
+          select: { blocks: 'blocks' },
+          prepare: ({ blocks }: { blocks?: unknown[] }) => ({
+            title: `Column (${(blocks ?? []).length} block${(blocks ?? []).length === 1 ? '' : 's'})`,
+          }),
+        },
       }],
     }),
   ],

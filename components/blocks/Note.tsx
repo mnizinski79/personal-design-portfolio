@@ -10,7 +10,7 @@ interface NoteBlockProps {
 
 const components: PortableTextComponents = {
   block: {
-    normal: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+    normal: ({ children }) => <p className="body-small mb-3 last:mb-0">{children}</p>,
     h2: ({ children }) => <h2 className="mb-4">{children}</h2>,
     h3: ({ children }) => <h3 className="mb-3">{children}</h3>,
   },

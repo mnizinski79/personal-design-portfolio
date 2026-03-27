@@ -20,8 +20,8 @@ export default function ProjectMasthead({
   backgroundImageUrl,
   logoImageUrl,
 }: ProjectMastheadProps) {
-  const titleColor = 'text-text-body'
-  const valueColor = 'text-text-secondary'
+  const titleColor = textColorInverse ? 'text-text-inverse' : 'text-text-body'
+  const valueColor = textColorInverse ? 'text-gray-300' : 'text-text-secondary'
 
   return (
     <div

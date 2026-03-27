@@ -2,6 +2,28 @@
 
 ---
 
+## 2026-03-27 — Component Bug Fixes & CMS Wiring Audit
+
+### Accomplished
+- **Created `/test-components-page` route** — `app/(site)/test-components-page/page.tsx` rendering all block types; also added light + dark `skillBars` blocks for testing `textColorInverse`
+- **Updated Sanity packages** — `sanity` 5.17.1 → 5.18.0, `next-sanity` 12.1.3 → 12.1.6; fixes the "Cannot apply deep operations on primitive values / progress" SDK error
+- **Fixed `ProjectMasthead` text color** — `titleColor` and `valueColor` were hardcoded and never read `textColorInverse`; now correctly go white on dark mastheads
+- **Fixed `SkillBarsBlock` prop passthrough** — `textColorInverse` was accepted but never forwarded to child `<SkillBars>`; `SkillBars` now accepts the prop and applies it to skill labels and zone labels
+- **Fixed Columns → Sanity field mismatch** — `BlockRenderer` was reading `block.items` but the schema field is named `columnContent`; updated to read `block.columnContent` with legacy fallback
+- **Redesigned Columns block schema** — each column now holds an ordered `blocks` array of three sub-types (`columnImage`, `columnRichText`, `columnNote`) instead of flat `heading`/`body` strings; users can drag-to-reorder within each column in Studio
+- **Updated `Columns.tsx`** — new `ColumnBlockItem` dispatcher renders image, rich text, and note block types within each column; legacy `heading`/`body` placeholder data preserved
+- **Note block typography** — applied `body-small` (12px) token per Figma spec; root cause of font size not applying was `p { font-size: 16px }` base rule overriding inherited class — fixed by moving `body-small` onto `<p>` elements directly in PortableText components (both standalone `Note.tsx` and `ptNoteComponents` in `Columns.tsx`)
+- **Note block padding** — confirmed `px-6` (24px) on standalone Note; added matching `px-6` to `columnNote` renderer in `Columns.tsx`
+
+### Next Steps
+1. **Enter real content in Sanity Studio** — projects, images, copy at `/studio`
+2. **Contact form** — wire submission handler (SendGrid env vars in `.env.local`)
+3. **SEO / metadata** — `generateMetadata` per page, OG images
+4. **Performance pass** — image optimization audit, Lighthouse run
+5. **Deploy** — Vercel deploy with env vars
+
+---
+
 ## 2026-03-24 — Phase 5 Continued: CMS Schema Polish & Studio UX
 
 ### Accomplished

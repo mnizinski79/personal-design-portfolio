@@ -15,7 +15,7 @@ export default function SkillBarsBlock({
       style={backgroundColor ? { backgroundColor } : undefined}
     >
       <div className="page-content">
-        <SkillBars />
+        <SkillBars textColorInverse={textColorInverse} />
       </div>
     </div>
   )

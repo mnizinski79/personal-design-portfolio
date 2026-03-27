@@ -30,9 +30,10 @@ const DEFAULT_SKILLS: Skill[] = [
 interface SkillBarsProps {
   skills?: Skill[]
   zoneLabels?: string[]
+  textColorInverse?: boolean
 }
 
-export default function SkillBars({ skills, zoneLabels }: SkillBarsProps) {
+export default function SkillBars({ skills, zoneLabels, textColorInverse = false }: SkillBarsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const resolvedSkills = skills ?? DEFAULT_SKILLS
   const resolvedZoneLabels = zoneLabels ?? DEFAULT_ZONE_LABELS
@@ -59,6 +60,8 @@ export default function SkillBars({ skills, zoneLabels }: SkillBarsProps) {
     return () => observer.disconnect()
   }, [])
 
+  const labelColor = textColorInverse ? 'text-gray-300' : 'text-text-secondary'
+
   return (
     <div ref={containerRef}>
 
@@ -69,7 +72,7 @@ export default function SkillBars({ skills, zoneLabels }: SkillBarsProps) {
         </h2>
         <div className="hidden md:flex flex-1 gap-6 pb-2">
           {resolvedZoneLabels.map((label) => (
-            <p key={label} className="body-small flex-1 text-center text-text-secondary">
+            <p key={label} className={`body-small flex-1 text-center ${labelColor}`}>
               {label}
             </p>
           ))}
@@ -92,7 +95,7 @@ export default function SkillBars({ skills, zoneLabels }: SkillBarsProps) {
           {resolvedSkills.map((skill) => (
             <div key={skill.label} className="flex flex-col md:flex-row md:items-center">
 
-              <p className="body-small font-semibold text-text-secondary shrink-0 mb-2 md:mb-0 md:w-[168px]">
+              <p className={`body-small font-semibold shrink-0 mb-2 md:mb-0 md:w-[168px] ${labelColor}`}>
                 {skill.label}
               </p>
 

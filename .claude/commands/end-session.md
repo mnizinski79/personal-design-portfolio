@@ -25,4 +25,5 @@ Wrap up the current working session. Do the following steps in order:
    - Before pushing, check the current branch with `git branch --show-current`, then ask Mike: "You're on branch `[branch]` — push here, or a different branch?"
    - Push to the branch Mike confirms
 
-4. **Confirm** — tell Mike the commit was pushed and show the commit message used
+4. **Stop local servers** — check for any dev servers that were started this session (e.g. `next dev`, `sanity dev`). If any are still running, stop them and confirm they've been shut down.
+5. **Confirm** — tell Mike the commit was pushed and show the commit message used

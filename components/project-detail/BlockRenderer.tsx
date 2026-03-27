@@ -68,7 +68,7 @@ export default function BlockRenderer({ blocks }: BlockRendererProps) {
                 {...sharedProps}
                 variant={block.variant as never}
                 columnCount={block.columnCount as number}
-                items={block.items as never}
+                items={(block.columnContent ?? block.items) as never}
               />
             )
 
