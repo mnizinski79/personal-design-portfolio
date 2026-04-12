@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -13,6 +13,7 @@
     "@sanity/client": "^7.20.0",
     "@sanity/color-input": "^6.0.4",
     "@sanity/image-url": "^2.0.3",
+    "@sanity/orderable-document-list": "^1.5.1",
     "@sanity/vision": "^5.17.1",
     "framer-motion": "^12.38.0",
     "next": "16.2.1",

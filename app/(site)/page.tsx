@@ -1,5 +1,5 @@
 import { client } from '@/sanity/lib/client'
-import { featuredProjectsQuery, homePageQuery } from '@/sanity/lib/queries'
+import { homePageQuery } from '@/sanity/lib/queries'
 import { urlFor } from '@/sanity/lib/image'
 import { PortableText } from '@portabletext/react'
 import Button from '@/components/ui/Button'
@@ -22,11 +22,9 @@ const PLACEHOLDER_PROJECTS: FeaturedProject[] = [
 ]
 
 export default async function HomePage() {
-  const [homePage, sanityProjects] = await Promise.all([
-    client.fetch(homePageQuery).catch(() => null),
-    client.fetch(featuredProjectsQuery).catch(() => []),
-  ])
-  const featuredProjects = (sanityProjects as FeaturedProject[]).length > 0 ? sanityProjects as FeaturedProject[] : PLACEHOLDER_PROJECTS
+  const homePage = await client.fetch(homePageQuery).catch(() => null)
+  const sanityProjects = (homePage?.featuredProjects ?? []) as FeaturedProject[]
+  const featuredProjects = sanityProjects.length > 0 ? sanityProjects : PLACEHOLDER_PROJECTS
 
   return (
     <div>
@@ -124,7 +122,7 @@ export default async function HomePage() {
                       </p>
                     </div>
                     <Button
-                      as="a"
+                      as="transition-link"
                       href={`/projects/${slug}`}
                       variant={textColorInverse ? 'light' : 'dark'}
                     >

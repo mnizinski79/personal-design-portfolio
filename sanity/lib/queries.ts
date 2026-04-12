@@ -12,28 +12,30 @@ export const globalSettingsQuery = groq`*[_type == "globalSettings"][0] {
 }`
 
 // ── Home Page ────────────────────────────────────────────────────────────────
-export const homePageQuery = groq`*[_type == "homePage"][0]`
-
-// ── Featured Projects (for home page) ───────────────────────────────────────
-export const featuredProjectsQuery = groq`*[_type == "project" && featured == true] | order(order asc) {
-  title,
-  slug,
-  featuredImage,
-  featuredTitle,
-  featuredDescription,
-  featuredButtonLabel,
-  "featuredBackground": featuredBackground.hex,
-  featuredTextColorInverse
+export const homePageQuery = groq`*[_type == "homePage"][0] {
+  heroText,
+  bioText,
+  featuredProjects[]-> {
+    title,
+    slug,
+    gridLabel,
+    featuredImage,
+    featuredTitle,
+    featuredDescription,
+    featuredButtonLabel,
+    "featuredBackground": featuredBackground.hex,
+    featuredTextColorInverse
+  }
 }`
 
 // ── Projects Grid ────────────────────────────────────────────────────────────
-export const projectsQuery = groq`*[_type == "project"] | order(order asc) {
+export const projectsQuery = groq`*[_type == "project"] | order(orderRank asc) {
   title,
   slug,
   thumbnail,
   gridLabel,
   featured,
-  order
+  orderRank
 }`
 
 // ── Single Project (detail page) ─────────────────────────────────────────────
@@ -44,6 +46,7 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
   gridLabel,
   mastheadFields,
   headerBackgroundImage,
+  mastheadLogo,
   mastheadTextColorInverse,
   featured,
   featuredImage,
@@ -52,8 +55,7 @@ export const projectBySlugQuery = groq`*[_type == "project" && slug.current == $
   featuredButtonLabel,
   "featuredBackground": featuredBackground.hex,
   featuredTextColorInverse,
-  contentBlocks[],
-  order
+  contentBlocks[]
 }`
 
 // ── All project slugs (for generateStaticParams) ─────────────────────────────

@@ -38,6 +38,16 @@ export const homePage = defineType({
       description: 'Supports multiple paragraphs.',
       of: [{ type: 'block', styles: [{ title: 'Normal', value: 'normal' }] }],
     }),
+    defineField({
+      name: 'featuredProjects',
+      type: 'array',
+      title: 'Featured Projects',
+      description: 'Pick projects and drag to set their order on the home page. Completely independent from the project list order.',
+      of: [{
+        type: 'reference',
+        to: [{ type: 'project' }],
+      }],
+    }),
   ],
   preview: {
     prepare: () => ({ title: 'Home Page' }),

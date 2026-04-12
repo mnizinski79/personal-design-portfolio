@@ -1,4 +1,5 @@
 import { AnchorHTMLAttributes, ButtonHTMLAttributes } from 'react'
+import TransitionLink from '@/components/layout/TransitionLink'
 
 type Variant = 'dark' | 'light'
 
@@ -34,11 +35,25 @@ type AnchorElementProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   as: 'a'
 }
 
-type ButtonProps = ButtonElementProps | AnchorElementProps
+// ── <TransitionLink> element (animated page nav) ──────────────────────────────
+type TransitionLinkElementProps = {
+  variant?: Variant
+  as: 'transition-link'
+  href: string
+  children: React.ReactNode
+  className?: string
+}
+
+type ButtonProps = ButtonElementProps | AnchorElementProps | TransitionLinkElementProps
 
 export default function Button(props: ButtonProps) {
   const { variant = 'dark', className, ...rest } = props
   const cls = `${classes(variant)}${className ? ` ${className}` : ''}`
+
+  if (props.as === 'transition-link') {
+    const { as: _as, variant: _v, ...linkRest } = rest as TransitionLinkElementProps
+    return <TransitionLink className={cls} {...linkRest} />
+  }
 
   if (props.as === 'a') {
     const { as: _as, variant: _v, ...anchorRest } = rest as AnchorElementProps

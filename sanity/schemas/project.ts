@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list'
 
 // ── Site design palette — shown as swatches in all color pickers ──────────────
 const SITE_COLORS = [
@@ -395,9 +396,9 @@ export const project = defineType({
   type: 'document',
   fields: [
     // Core
+    orderRankField({ type: 'project' }),
     defineField({ name: 'title', type: 'string', title: 'Project Name', validation: (r) => r.required() }),
     defineField({ name: 'slug', type: 'slug', title: 'URL Slug', options: { source: 'title' }, validation: (r) => r.required() }),
-    defineField({ name: 'order', type: 'number', title: 'Sort Order (lower = first)' }),
 
     // Grid card
     defineField({ name: 'thumbnail', type: 'image', title: 'Grid Thumbnail', options: { hotspot: true }, fields: [{ name: 'alt', type: 'string', title: 'Alt Text' }] }),
@@ -421,6 +422,7 @@ export const project = defineType({
       }],
     }),
     defineField({ name: 'headerBackgroundImage', type: 'image', title: 'Masthead Background Image', options: { hotspot: true } }),
+    defineField({ name: 'mastheadLogo', type: 'image', title: 'Masthead Client Logo', description: 'Logo displayed in the masthead. Leave blank to show no logo.', options: { hotspot: false } }),
     defineField({ name: 'mastheadTextColorInverse', type: 'boolean', title: 'Masthead: Use Light Text (white)', initialValue: false }),
 
     // Featured card (home page)
@@ -450,16 +452,11 @@ export const project = defineType({
     }),
   ],
   preview: {
-    select: { title: 'title', order: 'order' },
+    select: { title: 'title' },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    prepare: ({ title, order }: any) => ({
-      title,
-      subtitle: order !== undefined ? `Order: ${order}` : '',
-    }),
+    prepare: ({ title }: any) => ({ title }),
   },
-  orderings: [
-    { title: 'Sort Order', name: 'orderAsc', by: [{ field: 'order', direction: 'asc' }] },
-  ],
+  orderings: [orderRankOrdering],
 })
 
 // Export all block types so they can be registered in schemaTypes

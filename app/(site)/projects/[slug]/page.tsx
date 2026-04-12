@@ -63,6 +63,10 @@ export default async function ProjectDetailPage({
     ? urlFor(project.headerBackgroundImage).width(1440).url()
     : undefined
 
+  const logoImageUrl = project.mastheadLogo
+    ? urlFor(project.mastheadLogo).height(180).url()
+    : undefined
+
   return (
     <div>
       <ProjectMasthead
@@ -70,6 +74,7 @@ export default async function ProjectDetailPage({
         fields={fields}
         textColorInverse={project.mastheadTextColorInverse ?? false}
         backgroundImageUrl={backgroundImageUrl}
+        logoImageUrl={logoImageUrl}
       />
       <BlockRenderer blocks={(project.contentBlocks ?? []) as Block[]} />
     </div>

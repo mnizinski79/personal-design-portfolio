@@ -41,14 +41,16 @@ export default function ProjectMasthead({
       {/* ── Mobile layout: top-aligned, full-width padded ─────────────────── */}
       <div className="md:hidden relative z-10 flex flex-col gap-6 p-6 pt-8">
         {/* Client logo */}
-        <div className="relative h-[60px] w-[200px]">
-          <Image
-            src={logoImageUrl ?? '/assets/client-logo-color.png'}
-            alt="Client logo"
-            fill
-            className="object-contain object-left"
-          />
-        </div>
+        {logoImageUrl && (
+          <div className="relative h-[60px] w-[200px]">
+            <Image
+              src={logoImageUrl}
+              alt="Client logo"
+              fill
+              className="object-contain object-left"
+            />
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           <p className={`h4-upper ${titleColor}`}>{title}</p>
@@ -70,14 +72,16 @@ export default function ProjectMasthead({
       <div className="hidden md:flex absolute inset-0 z-10 items-center">
         <div className="masthead-content flex flex-col gap-14">
           {/* Client logo */}
-          <div className="relative h-[90px] w-[320px]">
-            <Image
-              src={logoImageUrl ?? '/assets/client-logo-color.png'}
-              alt="Client logo"
-              fill
-              className="object-contain object-left"
-            />
-          </div>
+          {logoImageUrl && (
+            <div className="relative h-[90px] w-[320px]">
+              <Image
+                src={logoImageUrl}
+                alt="Client logo"
+                fill
+                className="object-contain object-left"
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-4">
             <p className={`h4-upper ${titleColor}`}>{title}</p>

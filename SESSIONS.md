@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-04-12 — Dev Server Config & Featured Project Transition
+
+### Accomplished
+- **Diagnosed Sanity Studio "not registered" error** — root cause was dev server running on port 3002 instead of the already-whitelisted port 3000
+- **Locked dev port to 3000 in `package.json`** — `"dev": "next dev --port 3000"` so the Sanity CORS origin never needs updating during local development
+- **Added `as="transition-link"` to `Button` component** — `Button` now supports a third `as` variant that renders a `TransitionLink` with full button styling applied; single-prop change for any button that needs animated page navigation
+- **Wired featured project "CHECK IT OUT" button to page transition** — updated home page from `as="a"` to `as="transition-link"` so it uses the same slide animation as sidebar nav links
+
+### Next Steps
+1. **Enter real content in Sanity Studio** — projects, images, copy at `localhost:3000/studio`
+2. **Contact form** — wire submission handler (SendGrid env vars in `.env.local`)
+3. **SEO / metadata** — `generateMetadata` per page, OG images
+4. **Performance pass** — image optimization audit, Lighthouse run
+5. **Deploy** — Vercel deploy with env vars
+
+---
+
 ## 2026-03-27 — Component Bug Fixes & CMS Wiring Audit
 
 ### Accomplished
